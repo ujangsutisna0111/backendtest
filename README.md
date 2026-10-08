@@ -14,15 +14,15 @@ npm install
 Buat file `.env` di root project:
 
 ```dotenv
-HOST=localhost
-PORT=3000
-NODE_ENV=development
+HOST=
+PORT=
+NODE_ENV=
 
-PGHOST=localhost
-PGPORT=5432
-PGUSER=postgres
-PGPASSWORD=change-me
-PGDATABASE=open_job
+PGHOST=
+PGPORT=
+PGUSER=
+PGPASSWORD=
+PGDATABASE=
 
 ACCESS_TOKEN_KEY=replace-with-a-long-random-secret
 ```
