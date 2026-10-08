@@ -32,12 +32,6 @@ export const up = (pgm) => {
       type: "VARCHAR(100)",
     },
 
-    sort_order: {
-      type: "INTEGER",
-      notNull: true,
-      default: 0,
-    },
-
     created_at: {
       type: "TIMESTAMP",
       notNull: true,

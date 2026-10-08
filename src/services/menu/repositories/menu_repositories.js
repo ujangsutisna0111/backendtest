@@ -3,20 +3,18 @@ import pool from "../../../database/pool.js";
 import InvariantError from "../../../exceptions/invariant-error.js";
 
 const repository = {
-  async createMenu({ name, parentId, path, icon, sortOrder }) {
+  async createMenu({ name, parentId, path, icon }) {
     try {
       const { rows } = await pool.query(
-        `INSERT INTO menus (id, name, parent_id, path, icon, sort_order)
-         VALUES ($1, $2, $3, $4, $5, $6)
-         RETURNING id, name, parent_id, path, icon, sort_order,
-                   created_at, updated_at`,
+        `INSERT INTO menus (id, name, parent_id, path, icon)
+         VALUES ($1, $2, $3, $4, $5)
+         RETURNING id, name, parent_id, path, icon, created_at, updated_at`,
         [
-          crypto.randoamUUID(),
+          crypto.randomUUID(),
           name,
           parentId ?? null,
           path ?? null,
           icon ?? null,
-          sortOrder ?? 0,
         ],
       );
 
@@ -31,10 +29,9 @@ const repository = {
 
   async getMenus() {
     const { rows } = await pool.query(
-      `SELECT id, name, parent_id, path, icon, sort_order,
-              created_at, updated_at
+      `SELECT id, name, parent_id, path, icon, created_at, updated_at
        FROM menus
-       ORDER BY sort_order, name`,
+       ORDER BY name`,
     );
 
     return rows;
@@ -48,8 +45,7 @@ const repository = {
             m.name,
             m.parent_id,
             m.path,
-            m.icon,
-            m.sort_order
+            m.icon
         FROM menu_access ma
         JOIN menus m
             ON m.id = ma.menu_id
@@ -62,8 +58,7 @@ const repository = {
             child.name,
             child.parent_id,
             child.path,
-            child.icon,
-            child.sort_order
+            child.icon
         FROM menus child
         JOIN menu_tree parent
             ON child.parent_id = parent.id
@@ -74,9 +69,9 @@ const repository = {
           name,
           parent_id,
           path,
-          icon,
-          sort_order
+          icon
       FROM menu_tree
+      ORDER BY name
       ;
       `,
       [jabatanId],
@@ -112,30 +107,18 @@ const repository = {
     return result;
   },
 
-  async createMenuAccess({
-    jabatanId,
-    menuId,
-    canCreate,
-    canRead,
-    canUpdate,
-    canDelete,
-  }) {
+  async createMenuAccess({ jabatanId, menuId }) {
     try {
       const { rows } = await pool.query(
         `INSERT INTO menu_access (
-           id, jabatan_id, menu_id, can_create, can_read, can_update, can_delete
+           id, jabatan_id, menu_id
          )
-         VALUES ($1, $2, $3, $4, $5, $6, $7)
-         RETURNING id, jabatan_id, menu_id, can_create, can_read,
-                   can_update, can_delete, created_at, updated_at`,
+         VALUES ($1, $2, $3)
+         RETURNING id, jabatan_id, menu_id, created_at, updated_at`,
         [
           crypto.randomUUID(),
           jabatanId,
           menuId,
-          canCreate ?? false,
-          canRead ?? false,
-          canUpdate ?? false,
-          canDelete ?? false,
         ],
       );
 

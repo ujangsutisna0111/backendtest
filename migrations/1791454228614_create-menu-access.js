@@ -27,30 +27,6 @@ export const up = (pgm) => {
       onDelete: "CASCADE",
     },
 
-    can_create: {
-      type: "BOOLEAN",
-      notNull: true,
-      default: false,
-    },
-
-    can_read: {
-      type: "BOOLEAN",
-      notNull: true,
-      default: false,
-    },
-
-    can_update: {
-      type: "BOOLEAN",
-      notNull: true,
-      default: false,
-    },
-
-    can_delete: {
-      type: "BOOLEAN",
-      notNull: true,
-      default: false,
-    },
-
     created_at: {
       type: "TIMESTAMP",
       notNull: true,
