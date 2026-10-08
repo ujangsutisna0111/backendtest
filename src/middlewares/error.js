@@ -14,10 +14,6 @@ const ErrorHandler = (err, req, res, next) => {
     return response(res, err.statusCode, err.message);
   }
 
-  if (err.statusCode >= 400 && err.statusCode < 500) {
-    return response(res, err.statusCode, err.message);
-  }
-
   console.error("Unhandled error:", err);
 
   return response(res, 500, "Internal server error");

@@ -20,11 +20,9 @@ const login = async (req, res) => {
     throw new AuthenticationError("Invalid username or password");
   }
 
-  const jabatanKaryawan =
+  const roles =
     await jabatanKaryawanRepository.getJabatanByKaryawanId(user.id);
-  console.log(jabatanKaryawan);
-  const role = jabatanKaryawan.map(({ jabatan }) => jabatan);
-  console.log(role);
+  
 
   res.status(200).json({
     status: "success",
@@ -33,7 +31,7 @@ const login = async (req, res) => {
       accessToken: TokenManager.generateAccessToken({
         id: user.id,
         username: user.username,
-        role,
+        roles,
       }),
     },
   });

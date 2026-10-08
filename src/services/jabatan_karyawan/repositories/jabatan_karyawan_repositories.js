@@ -5,9 +5,8 @@ import InvariantError from "../../../exceptions/invariant-error.js";
 const repository = {
   async getJabatanByKaryawanId(karyawanId) {
     const { rows } = await pool.query(
-      `SELECT jk.id, jk.karyawan_id, jk.jabatan_id,
-              j.name AS jabatan, j.description,
-              jk.created_at, jk.updated_at
+      `SELECT jk.jabatan_id,
+              j.name AS jabatan
        FROM jabatan_karyawan jk
        JOIN jabatan j ON j.id = jk.jabatan_id
        WHERE jk.karyawan_id = $1

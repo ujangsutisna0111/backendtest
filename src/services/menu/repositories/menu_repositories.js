@@ -115,11 +115,7 @@ const repository = {
          )
          VALUES ($1, $2, $3)
          RETURNING id, jabatan_id, menu_id, created_at, updated_at`,
-        [
-          crypto.randomUUID(),
-          jabatanId,
-          menuId,
-        ],
+        [crypto.randomUUID(), jabatanId, menuId],
       );
 
       return rows[0];

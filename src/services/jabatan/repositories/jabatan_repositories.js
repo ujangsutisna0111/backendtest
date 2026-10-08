@@ -33,7 +33,7 @@ const repository = {
 
   async getJabatanById(jabatanId) {
     const { rows } = await pool.query(
-      `SELECT id, name, description, created_at, updated_at
+      `SELECT id, name
        FROM jabatan
        WHERE id = $1`,
       [jabatanId],

@@ -1,7 +1,6 @@
 # Open Job Backend API
 
-Dokumentasi ini berfokus pada dua endpoint: login karyawan dan pengambilan
-menu berdasarkan ID jabatan.
+Dokumentasi ini berfokus pada dua endpoint utama: login karyawan dan pengambilan menu berdasarkan ID jabatan.
 
 ## Menjalankan aplikasi
 
@@ -27,8 +26,7 @@ PGDATABASE=
 ACCESS_TOKEN_KEY=replace-with-a-long-random-secret
 ```
 
-Gunakan secret acak yang kuat untuk `ACCESS_TOKEN_KEY` dan jangan commit nilai
-secret ke repository. Jalankan migration dan server:
+Gunakan secret acak yang kuat untuk `ACCESS_TOKEN_KEY` dan jangan commit nilai secret ke repository. Setelah itu, jalankan migration dan server:
 
 ```bash
 npm run migrate -- up
@@ -40,22 +38,31 @@ Server secara default berjalan di `http://localhost:3000`.
 ## Alur penggunaan
 
 1. Login dengan username dan password untuk mendapatkan access token.
-2. Kirim token tersebut sebagai Bearer token saat meminta menu berdasarkan
-   jabatan.
-
-Request dan response menggunakan JSON. Token berlaku selama 3 jam.
+2. Kirim token tersebut pada header `Authorization` saat meminta menu berdasarkan jabatan.
+3. Request dan response menggunakan format JSON.
 
 ## Login
 
 ### `POST /auth/login` — publik
 
-Request:
+Request body:
 
 ```json
 {
   "username": "ayu.putri",
   "password": "secret123"
 }
+```
+
+Contoh request menggunakan `curl`:
+
+```bash
+curl -X POST http://localhost:3000/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "ayu.putri",
+    "password": "secret123"
+  }'
 ```
 
 Response `200 OK`:
@@ -65,21 +72,30 @@ Response `200 OK`:
   "status": "success",
   "message": "Login successful",
   "data": {
-    "accessToken": "<jwt>"
+    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJheXUucHV0cmkiLCJyb2xlcyI6W3siamFiYXRhbl9pZCI6MX1dfQ.7QnPzZQ4e7J7hB4q5T9Y2wWc8O9u1Zk5F2vY0tV0gk0"
   }
 }
 ```
 
-Username atau password yang salah menghasilkan HTTP `401`. Gunakan
-`data.accessToken` pada header `Authorization` untuk endpoint berikutnya.
+Username atau password yang salah akan menghasilkan HTTP `401`.
+
+Gunakan `data.accessToken` sebagai header berikut untuk endpoint menu:
+
+```http
+Authorization: Bearer <accessToken>
+```
 
 ## Mengambil menu berdasarkan jabatan
 
-### `GET /menu/access/:jabatanId` — Bearer
+### `GET /menu/access/:jabatanId` — protected
 
-Mengambil menu yang diberikan langsung ke jabatan beserta seluruh turunannya
-dalam bentuk hierarki. Contoh URL:
-`GET /menu/access/jabatan-id`.
+Endpoint ini mengembalikan menu yang diberikan langsung ke jabatan beserta seluruh turunannya dalam bentuk hierarki.
+
+Contoh URL:
+
+```text
+GET /menu/access/1
+```
 
 Header:
 
@@ -87,10 +103,10 @@ Header:
 Authorization: Bearer <accessToken>
 ```
 
-Contoh menggunakan `curl`:
+Contoh request menggunakan `curl`:
 
 ```bash
-curl http://localhost:3000/menu/access/jabatan-id \
+curl http://localhost:3000/menu/access/1 \
   -H "Authorization: Bearer <accessToken>"
 ```
 
@@ -103,26 +119,57 @@ Response `200 OK`:
   "data": {
     "menus": [
       {
-        "id": "menu-id",
+        "id": "menu-1",
         "name": "Pengaturan",
         "path": "/settings",
         "icon": "settings",
         "menus": [
           {
-            "id": "submenu-id",
+            "id": "menu-2",
             "name": "Pengguna",
             "path": "/settings/users",
             "icon": "users",
             "menus": []
+          },
+          {
+            "id": "menu-3",
+            "name": "Role",
+            "path": "/settings/roles",
+            "icon": "shield",
+            "menus": []
           }
         ]
+      },
+      {
+        "id": "menu-4",
+        "name": "Dashboard",
+        "path": "/dashboard",
+        "icon": "dashboard",
+        "menus": []
       }
     ]
   }
 }
 ```
 
-Menu turunan ikut ditampilkan walaupun hanya menu induknya yang dihubungkan
-langsung ke jabatan. Respons menu berisi `id`, `name`, `path`, `icon`, dan
-`menus`; respons ini tidak mencakup flag izin CRUD. Token tidak valid atau
-tidak ada menghasilkan HTTP `401`.
+Menu turunan ikut ditampilkan walaupun hanya menu induknya yang terhubung langsung ke jabatan. Respons menu berisi `id`, `name`, `path`, `icon`, dan `menus`; respons ini tidak mencakup flag izin CRUD. Token yang tidak valid atau tidak ada akan menghasilkan HTTP `401`.
+
+## Contoh error response
+
+### `401 Unauthorized`
+
+```json
+{
+  "status": "error",
+  "message": "Unauthorized"
+}
+```
+
+### `403 Forbidden`
+
+```json
+{
+  "status": "error",
+  "message": "Forbidden"
+}
+```
