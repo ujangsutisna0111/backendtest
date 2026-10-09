@@ -26,7 +26,7 @@ PGDATABASE=
 APP_SECRET_KEY=
 ```
 
-Isi `APP_SECRET_KEY` dengan key 16 byte 
+Isi `APP_SECRET_KEY` dengan key 16 byte
 Server secara default berjalan di `http://localhost:3000`.
 
 ## Login
@@ -45,6 +45,20 @@ Response `200`:
 {
   "status": "success",
   "data": { "accessToken": "<token>" }
+}
+```
+
+**JWT Payload Data (Decoded):**
+
+Di dalam `accessToken` yang dihasilkan, terdapat informasi identitas user (_payload_) berupa objek terenkripsi yang dapat didecode dengan struktur sebagai berikut:
+
+```json
+{
+  "id": 12,
+  "username": "ayu.putri",
+  "roles": ["USER", "EDITOR"],
+  "iat": 1712660000,
+  "exp": 1712746400
 }
 ```
 
