@@ -8,7 +8,7 @@ const authenticate = (req, res, next) => {
   if (authHeader && authHeader.indexOf("Bearer ") !== -1) {
     try {
       const token = authHeader.split(" ")[1];
-      const decoded = jwt.verify(token, process.env.AAPP_SECRET_KEY);
+      const decoded = jwt.verify(token, process.env.APP_SECRET_KEY);
 
       req.user = decoded;
       next();
