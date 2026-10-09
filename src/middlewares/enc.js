@@ -20,7 +20,6 @@ const encDecode = (req, res, next) => {
     let decrypted = decipher.update(ciphertext, "base64", "utf8");
     decrypted += decipher.final("utf8");
 
-    // 4. Balikin ke bentuk Objek JSON asli
     const result = JSON.parse(decrypted);
   
     req.dataDecrypt = result;
