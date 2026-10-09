@@ -10,7 +10,7 @@ const encDecode = (req, res, next) => {
     return response(400, failed, "Bad request");
   }
 
-  const KEY_STRING = process.env.ACCESS_TOKEN_KEY;
+  const KEY_STRING = process.env.APP_SECRET_KEY;
   try {
     const key = Buffer.from(KEY_STRING, "utf8");
     const iv = Buffer.from(ivDariHeader, "hex");

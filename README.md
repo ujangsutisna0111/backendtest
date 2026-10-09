@@ -23,16 +23,10 @@ PGUSER=
 PGPASSWORD=
 PGDATABASE=
 
-ACCESS_TOKEN_KEY=
+APP_SECRET_KEY=
 ```
 
-Isi `ACCESS_TOKEN_KEY` dengan key 16 byte untuk AES-128 dan jangan commit nilainya. Jalankan migration dan server:
-
-```bash
-npm run migrate -- up
-npm run start:dev
-```
-
+Isi `APP_SECRET_KEY` dengan key 16 byte 
 Server secara default berjalan di `http://localhost:3000`.
 
 ## Login
@@ -56,7 +50,7 @@ Response `200`:
 
 ## Akses menu berdasarkan jabatan
 
-`GET /menu/jabatan/:jabatanId/menu` — protected. Ganti `:jabatanId` dengan ciphertext Base64 URL-safe dari JSON `{"jabatanId":"<id>"}` yang dienkripsi menggunakan AES-128-CBC dengan `ACCESS_TOKEN_KEY`. Kirim IV dalam format hex pada header `X-AES-IV`.
+`GET /menu/jabatan/:jabatanId/menu` — protected. Ganti `:jabatanId` dengan ciphertext Base64 URL-safe dari JSON `{"jabatanId":"<id>"}` yang dienkripsi menggunakan AES-128-CBC dengan `APP_SECRET_KEY`. Kirim IV dalam format hex pada header `X-AES-IV`.
 
 ```bash
 curl "http://localhost:3000/jabatan/${JABATAN_ID_CIPHERTEXT}/menu" \
@@ -84,26 +78,3 @@ Response `200`:
 ```
 
 Set `ACCESS_TOKEN` dengan `data.accessToken` dari response login. `menus` berisi menu turunan jika ada.
-
-## Jabatan karyawan
-
-`GET /api/karyawan/jabatan` — protected. Mengambil seluruh karyawan beserta
-array `jabatan` (kosong jika karyawan belum memiliki jabatan).
-
-`POST /api/karyawan/jabatan` menerima daftar pasangan karyawan dan jabatan.
-Relasi yang sudah ada diperbarui, sedangkan relasi baru ditambahkan; jabatan
-lain yang tidak dikirim tidak dihapus.
-
-```bash
-curl -X POST http://localhost:3000/api/karyawan/jabatan \
-  -H "Content-Type: application/json" \
-  -d '{
-    "assignments": [
-      { "karyawanId": "<karyawan-id>", "jabatanId": "<jabatan-id>" },
-      { "karyawanId": "<karyawan-id>", "jabatanId": "<jabatan-lain-id>" }
-    ]
-  }'
-```
-
-Bulk update diproses dalam satu transaksi database. Jika salah satu karyawan
-atau jabatan tidak ditemukan, seluruh perubahan dibatalkan.
