@@ -27,15 +27,7 @@ const repository = {
     }
   },
 
-  async getMenus() {
-    const { rows } = await pool.query(
-      `SELECT id, name, parent_id, path, icon, created_at, updated_at
-       FROM menus
-       ORDER BY name`,
-    );
 
-    return rows;
-  },
   async getMenuAccessByJabatan(jabatanId) {
     const { rows } = await pool.query(
       `WITH RECURSIVE menu_tree AS 

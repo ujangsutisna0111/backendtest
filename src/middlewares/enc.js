@@ -4,7 +4,6 @@ import response from "../utils/response.js";
 const encDecode = (req, res, next) => {
   const ciphertext = req.params.jabatanId;
 
-  console.log(ciphertext);
 
   const ivDariHeader = req.headers["x-aes-iv"];
   if (!ciphertext || !ivDariHeader) {
@@ -17,13 +16,13 @@ const encDecode = (req, res, next) => {
     const iv = Buffer.from(ivDariHeader, "hex");
 
     const decipher = crypto.createDecipheriv("aes-128-cbc", key, iv);
-    console.log(decipher);
+
     let decrypted = decipher.update(ciphertext, "base64", "utf8");
     decrypted += decipher.final("utf8");
 
     // 4. Balikin ke bentuk Objek JSON asli
     const result = JSON.parse(decrypted);
-    console.log(result);
+  
     req.dataDecrypt = result;
     next();
   } catch (error) {

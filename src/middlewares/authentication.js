@@ -9,7 +9,7 @@ const authenticate = (req, res, next) => {
     try {
       const token = authHeader.split(" ")[1];
       const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_KEY);
-      console.log(decoded);
+
       req.user = decoded;
       next();
     } catch (error) {
