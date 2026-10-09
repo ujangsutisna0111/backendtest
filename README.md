@@ -50,7 +50,7 @@ Response `200`:
 
 ## Akses menu berdasarkan jabatan
 
-`GET /menu/jabatan/:jabatanId/menu` — protected. Ganti `:jabatanId` dengan ciphertext Base64 URL-safe dari JSON `{"jabatanId":"<id>"}` yang dienkripsi menggunakan AES-128-CBC dengan `APP_SECRET_KEY`. Kirim IV dalam format hex pada header `X-AES-IV`.
+`GET /jabatan/:jabatanId/menu` — protected. Ganti `:jabatanId` dengan ciphertext Base64 URL-safe dari JSON `{"jabatanId":"<id>"}` yang dienkripsi menggunakan AES-128-CBC dengan `APP_SECRET_KEY`. Kirim IV dalam format hex pada header `X-AES-IV`.
 
 ```bash
 curl "http://localhost:3000/jabatan/${JABATAN_ID_CIPHERTEXT}/menu" \
