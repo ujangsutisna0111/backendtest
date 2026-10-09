@@ -1,21 +1,21 @@
-import express from "express";
+import Router from "express";
 
 import {
   createJabatan,
-  deleteJabatan,
+  createJabatanKaryawan,
   getJabatan,
   getJabatanById,
-  updateJabatan,
+  getJabatanByKaryawan,
 } from "../controllers/jabatan_controllers.js";
 import authenticate from "../../../middlewares/authentication.js";
 import { validateBody, validateParam } from "../../../middlewares/validate.js";
 import {
   createJabatanSchema,
+  createJabatanKaryawanSchema,
   jabatanIdSchema,
-  updateJabatanSchema,
 } from "../validators/schema.js";
 
-const router = express.Router();
+const router = Router();
 
 router.get("/", authenticate, getJabatan);
 router.post(
@@ -30,18 +30,12 @@ router.get(
   validateParam(jabatanIdSchema),
   getJabatanById,
 );
-router.patch(
-  "/:jabatanId",
-  authenticate,
-  validateParam(jabatanIdSchema),
-  validateBody(updateJabatanSchema),
-  updateJabatan,
-);
-router.delete(
-  "/:jabatanId",
-  authenticate,
-  validateParam(jabatanIdSchema),
-  deleteJabatan,
+
+router.get("/karyawan", authenticate, getJabatanByKaryawan);
+router.post(
+  "/karyawan",
+  validateBody(createJabatanKaryawanSchema),
+  createJabatanKaryawan,
 );
 
 export default router;

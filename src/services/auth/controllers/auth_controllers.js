@@ -1,7 +1,7 @@
 import AuthenticationError from "../../../exceptions/authentication-error.js";
 import authRepository from "../repositories/auth_repositories.js";
 import TokenManager from "../../../security/token-manager.js";
-import jabatanKaryawanRepository from "../../jabatan_karyawan/repositories/jabatan_karyawan_repositories.js";
+import jabatanRepository from "../../jabatan/repositories/jabatan_repositories.js";
 
 const register = async (req, res) => {
   const user = await authRepository.addUser(req.validatedBody);
@@ -21,7 +21,7 @@ const login = async (req, res) => {
   }
 
   const roles =
-    await jabatanKaryawanRepository.getJabatanByKaryawanId(user.id);
+    await jabatanRepository.getJabatanByKaryawanId(user.id);
   
 
   res.status(200).json({

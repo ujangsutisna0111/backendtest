@@ -1,5 +1,6 @@
 import menuRepository from "../repositories/menu_repositories.js";
 import ForbiddenError from "../../../exceptions/forbidden_error.js";
+import ClientError from "../../../exceptions/client-error.js";
 
 const createMenu = async (req, res) => {
   const menu = await menuRepository.createMenu(req.validatedBody);
@@ -22,7 +23,11 @@ const getMenus = async (_req, res) => {
 };
 
 const getMenuAccessByJabatan = async (req, res, next) => {
-  const { jabatanId } = req.validatedParams;
+  const { jabatanId } = req.dataDecrypt;
+
+  if (!jabatanId) {
+    next(new ClientError("Id Jabatan tidak valid"));
+  }
   const isRoleExist = req.user.roles.some(
     (role) => role.jabatan_id === jabatanId,
   );

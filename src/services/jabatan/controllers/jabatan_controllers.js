@@ -1,4 +1,5 @@
 import jabatanRepository from "../repositories/jabatan_repositories.js";
+import InvariantError from "../../../exceptions/invariant-error.js";
 import NotFoundError from "../../../exceptions/notfound-error.js";
 
 const createJabatan = async (req, res) => {
@@ -37,43 +38,40 @@ const getJabatanById = async (req, res) => {
   });
 };
 
-const updateJabatan = async (req, res) => {
-  const jabatan = await jabatanRepository.updateJabatan(
-    req.validatedParams.jabatanId,
-    req.validatedBody,
+const getJabatanByKaryawan = async (req, res) => {
+  const jabatanKaryawan = await jabatanRepository.getJabatanByKaryawanId(
+    req.user.id,
   );
-
-  if (!jabatan) {
-    throw new NotFoundError("Jabatan tidak ditemukan");
-  }
 
   res.status(200).json({
     status: "success",
-    message: "Jabatan berhasil diperbarui",
-    data: { jabatan },
+    message: "Jabatan karyawan berhasil diambil",
+    data: { jabatanKaryawan },
   });
 };
 
-const deleteJabatan = async (req, res) => {
-  const jabatan = await jabatanRepository.deleteJabatan(
-    req.validatedParams.jabatanId,
+const createJabatanKaryawan = async (req, res) => {
+  const { jabatanId, karyawanId } = req.validatedBody;
+  const jabatanKaryawan = await jabatanRepository.createJabatanKaryawan(
+    karyawanId,
+    jabatanId,
   );
 
-  if (!jabatan) {
-    throw new NotFoundError("Jabatan tidak ditemukan");
+  if (!jabatanKaryawan) {
+    throw new InvariantError("Karyawan atau jabatan tidak ditemukan");
   }
 
-  res.status(200).json({
+  res.status(201).json({
     status: "success",
-    message: "Jabatan berhasil dihapus",
-    data: { jabatan },
+    message: "Jabatan karyawan berhasil dibuat",
+    data: { jabatanKaryawan },
   });
 };
 
 export {
   createJabatan,
-  deleteJabatan,
+  createJabatanKaryawan,
   getJabatan,
   getJabatanById,
-  updateJabatan,
+  getJabatanByKaryawan,
 };
