@@ -26,7 +26,8 @@ PGDATABASE=
 APP_SECRET_KEY=
 ```
 
-Isi `APP_SECRET_KEY` dengan key 16 byte
+Isi `APP_SECRET_KEY` dengan key 16 byte.
+
 Server secara default berjalan di `http://localhost:3000`.
 
 ## Login
