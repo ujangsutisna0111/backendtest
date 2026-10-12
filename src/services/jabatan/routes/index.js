@@ -14,7 +14,7 @@ import {
   jabatanIdSchema,
   createMenuAccessSchema,
 } from "../validators/schema.js";
-import encDecode from "../../../middlewares/enc.js";
+import encDecodeParam from "../../../middlewares/enc.js";
 
 const router = Router();
 
@@ -35,7 +35,7 @@ router.get(
   "/:jabatanId/menu",
   authenticate,
   validateParam(jabatanIdSchema),
-  encDecode,
+  encDecodeParam,
   getMenuAccessByJabatan,
 );
 

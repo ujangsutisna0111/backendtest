@@ -1,9 +1,8 @@
 import crypto from "crypto";
 import response from "../utils/response.js";
 
-const encDecode = (req, res, next) => {
+const encDecodeParam = (req, res, next) => {
   const ciphertext = req.params.jabatanId;
-
 
   const ivDariHeader = req.headers["x-aes-iv"];
   if (!ciphertext || !ivDariHeader) {
@@ -21,13 +20,13 @@ const encDecode = (req, res, next) => {
     decrypted += decipher.final("utf8");
 
     const result = JSON.parse(decrypted);
-  
+
     req.dataDecrypt = result;
     next();
   } catch (error) {
     console.error("Eror decode BE:", error.message);
-    return res.status(400).json({ message: "Bad request " });
+    return response(200, "failed", "Bad request");
   }
 };
 
-export default encDecode;
+export default encDecodeParam;
