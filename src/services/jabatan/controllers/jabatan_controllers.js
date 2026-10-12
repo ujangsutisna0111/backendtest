@@ -41,6 +41,8 @@ const getJabatanById = async (req, res) => {
 
 const getMenuAccessByJabatan = async (req, res) => {
   const { jabatanId } = req.dataDecrypt;
+  
+  console.log(`jabatan${jabatanId}`);
 
   if (!jabatanId) {
     throw new ClientError("Id Jabatan tidak valid");

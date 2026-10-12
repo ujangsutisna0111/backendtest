@@ -1,32 +1,20 @@
-import crypto from "crypto";
-import response from "../utils/response.js";
+import encAes from "../security/enc-aes.js";
+import ClientError from "../exceptions/client-error.js";
 
 const encDecodeParam = (req, res, next) => {
   const ciphertext = req.params.jabatanId;
 
-  const ivDariHeader = req.headers["x-aes-iv"];
-  if (!ciphertext || !ivDariHeader) {
-    return response(400, failed, "Bad request");
+  const ivHeader = req.headers["x-aes-iv"];
+  if (!ciphertext || !ivHeader) {
+    throw new ClientError("Bad request");
   }
 
-  const KEY_STRING = process.env.APP_SECRET_KEY;
-  try {
-    const key = Buffer.from(KEY_STRING, "utf8");
-    const iv = Buffer.from(ivDariHeader, "hex");
+  const result = encAes.decode(ivHeader, ciphertext);
 
-    const decipher = crypto.createDecipheriv("aes-128-cbc", key, iv);
+  if (!result) throw new ClientError("Bad request");
 
-    let decrypted = decipher.update(ciphertext, "base64", "utf8");
-    decrypted += decipher.final("utf8");
-
-    const result = JSON.parse(decrypted);
-
-    req.dataDecrypt = result;
-    next();
-  } catch (error) {
-    console.error("Eror decode BE:", error.message);
-    return response(200, "failed", "Bad request");
-  }
+  req.dataDecrypt = result;
+  next();
 };
 
 export default encDecodeParam;
