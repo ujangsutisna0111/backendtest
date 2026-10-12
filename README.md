@@ -56,7 +56,16 @@ Di dalam `accessToken` yang dihasilkan, terdapat informasi identitas user (_payl
 {
   "id": 12,
   "username": "ayu.putri",
-  "roles": ["USER", "EDITOR"],
+  "roles": [
+    {
+      "jabatan_id": "4fb285ab-b730-4be8-b12b-89eb46a87a83",
+      "jabatan": "Admin"
+    },
+    {
+      "jabatan_id": "f147f8d9-30bc-4a27-a959-a82518991c50",
+      "jabatan": "Manager"
+    }
+  ],
   "iat": 1712660000,
   "exp": 1712746400
 }
