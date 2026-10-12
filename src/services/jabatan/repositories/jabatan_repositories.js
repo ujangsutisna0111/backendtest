@@ -1,11 +1,14 @@
 import crypto from "node:crypto";
-import pool from "../../../database/pool.js";
+import { Pool } from "pg";
 import InvariantError from "../../../exceptions/invariant-error.js";
 
-const repository = {
+class RepositoriesJabatan {
+  constructor() {
+    this.pool = new Pool();
+  }
   async createJabatan({ name, description }) {
     try {
-      const { rows } = await pool.query(
+      const { rows } = await this.pool.query(
         `INSERT INTO jabatan (id, name, description)
          VALUES ($1, $2, $3)
          RETURNING id, name, description, created_at, updated_at`,
@@ -19,20 +22,20 @@ const repository = {
       }
       throw error;
     }
-  },
+  }
 
   async getJabatan() {
-    const { rows } = await pool.query(
+    const { rows } = await this.pool.query(
       `SELECT id, name, description, created_at, updated_at
        FROM jabatan
        ORDER BY name`,
     );
 
     return rows;
-  },
+  }
 
   async getJabatanById(jabatanId) {
-    const { rows } = await pool.query(
+    const { rows } = await this.pool.query(
       `SELECT id, name
        FROM jabatan
        WHERE id = $1`,
@@ -40,13 +43,13 @@ const repository = {
     );
 
     return rows[0] ?? null;
-  },
+  }
 
   async updateJabatan(jabatanId, { name, description }) {
     const hasName = name !== undefined;
     const hasDescription = description !== undefined;
     try {
-      const { rows } = await pool.query(
+      const { rows } = await this.pool.query(
         `UPDATE jabatan
          SET name = CASE WHEN $2 THEN $3 ELSE name END,
              description = CASE WHEN $4 THEN $5 ELSE description END,
@@ -63,10 +66,10 @@ const repository = {
       }
       throw error;
     }
-  },
+  }
 
   async deleteJabatan(jabatanId) {
-    const { rows } = await pool.query(
+    const { rows } = await this.pool.query(
       `DELETE FROM jabatan
        WHERE id = $1
        RETURNING id, name, description`,
@@ -74,10 +77,10 @@ const repository = {
     );
 
     return rows[0] ?? null;
-  },
+  }
 
   async getJabatanByKaryawanId(karyawanId) {
-    const { rows } = await pool.query(
+    const { rows } = await this.pool.query(
       `SELECT jk.jabatan_id,
               j.name AS jabatan
        FROM jabatan_karyawan jk
@@ -88,11 +91,11 @@ const repository = {
     );
 
     return rows;
-  },
+  }
 
   async createJabatanKaryawan(karyawanId, jabatanId) {
     try {
-      const { rows } = await pool.query(
+      const { rows } = await this.pool.query(
         `INSERT INTO jabatan_karyawan (id, karyawan_id, jabatan_id)
          VALUES ($1, $2, $3)
          RETURNING id, karyawan_id, jabatan_id, created_at, updated_at`,
@@ -109,7 +112,7 @@ const repository = {
       }
       throw error;
     }
-  },
-};
+  }
+}
 
-export default repository;
+export default new RepositoriesJabatan();

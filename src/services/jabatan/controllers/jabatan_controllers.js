@@ -1,7 +1,6 @@
 import jabatanRepository from "../repositories/jabatan_repositories.js";
 import NotFoundError from "../../../exceptions/notfound-error.js";
 import ClientError from "../../../exceptions/client-error.js";
-import Forbidden from "../../../exceptions/forbidden_error.js";
 import menuRepository from "../../menu/repositories/menu_repositories.js";
 import ForbiddenError from "../../../exceptions/forbidden_error.js";
 const createJabatan = async (req, res) => {

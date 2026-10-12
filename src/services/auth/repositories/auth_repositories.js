@@ -1,14 +1,17 @@
 import bcrypt from "bcrypt";
 import crypto from "node:crypto";
-import pool from "../../../database/pool.js";
+import { Pool } from "pg";
 import InvariantError from "../../../exceptions/invariant-error.js";
 
-const repository = {
+class Repositories {
+  constructor() {
+    this.pool = new Pool();
+  }
   async addUser({ name, username, password }) {
     const passwordHash = await bcrypt.hash(password, 12);
 
     try {
-      const { rows } = await pool.query(
+      const { rows } = await this.pool.query(
         `INSERT INTO karyawan (id, name, username, password)
          VALUES ($1, $2, $3, $4)
          RETURNING id, name, username`,
@@ -22,10 +25,10 @@ const repository = {
       }
       throw error;
     }
-  },
+  }
 
   async verifyUser({ username, password }) {
-    const { rows } = await pool.query(
+    const { rows } = await this.pool.query(
       `SELECT id, name, username, password
        FROM karyawan
        WHERE username = $1`,
@@ -39,7 +42,7 @@ const repository = {
 
     const { password: _passwordHash, ...safeUser } = user;
     return safeUser;
-  },
-};
+  }
+}
 
-export default repository;
+export default new Repositories();

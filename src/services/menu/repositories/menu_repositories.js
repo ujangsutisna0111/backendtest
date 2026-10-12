@@ -1,11 +1,14 @@
 import crypto from "node:crypto";
-import pool from "../../../database/pool.js";
+import { Pool } from "pg";
 import InvariantError from "../../../exceptions/invariant-error.js";
 
-const repository = {
+class Repositories {
+  constructor() {
+    this.pool = new Pool();
+  }
   async createMenu({ name, parentId, path, icon }) {
     try {
-      const { rows } = await pool.query(
+      const { rows } = await this.pool.query(
         `INSERT INTO menus (id, name, parent_id, path, icon)
          VALUES ($1, $2, $3, $4, $5)
          RETURNING id, name, parent_id, path, icon, created_at, updated_at`,
@@ -25,11 +28,10 @@ const repository = {
       }
       throw error;
     }
-  },
-
+  }
 
   async getMenuAccessByJabatan(jabatanId) {
-    const { rows } = await pool.query(
+    const { rows } = await this.pool.query(
       `WITH RECURSIVE menu_tree AS 
       (
         SELECT
@@ -97,11 +99,11 @@ const repository = {
     });
 
     return result;
-  },
+  }
 
   async createMenuAccess({ jabatanId, menuId }) {
     try {
-      const { rows } = await pool.query(
+      const { rows } = await this.pool.query(
         `INSERT INTO menu_access (
            id, jabatan_id, menu_id
          )
@@ -122,7 +124,7 @@ const repository = {
       }
       throw error;
     }
-  },
-};
+  }
+}
 
-export default repository;
+export default new Repositories();
